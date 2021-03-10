@@ -2,34 +2,20 @@ package com.bomstart.tobyspring.user.dao;
 
 import com.bomstart.tobyspring.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UserDao {
+    DataSource dataSource;
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
-
-        User user = new User();
-        user.setId("devandy");
-        user.setName("youngjinmo");
-        user.setPassword("12345678");
-
-        dao.add(user);
-
-        System.out.println(user.getId()+" 등록성공 !!");
+    public UserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/bomstartDB";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "1q2w3e4r";
-
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Class.forName(DRIVER);
-        Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection conn = this.dataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement("INSERT INTO user(id, name, password) VALUES(?,?,?)");
         ps.setString(1, user.getId());
         ps.setString(2, user.getName());
