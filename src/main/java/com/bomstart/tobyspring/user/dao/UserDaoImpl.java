@@ -26,32 +26,25 @@ public class UserDaoImpl implements UserDao{
      */
     @Override
     public User selectUser(String id) {
-        Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         User user = null;
 
-        try {
-            conn = this.dataSource.getConnection();
-            ps = conn.prepareStatement("SELECT * FROM user WHERE id = ? ");
+        try (Connection conn = this.dataSource.getConnection();){
+            ps = conn.prepareStatement("SELECT id, name, password FROM user WHERE id = ? ");
             ps.setString(1, id);
 
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                user = new User();
-                user.setId(rs.getString("id"));
-                user.setName(rs.getString("name"));
-                user.setPassword(rs.getString("password"));
+                user = new User(rs.getString(1), rs.getString(2), rs.getString(3));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (rs != null) try{rs.close();} catch(Exception e){}
-            if (ps != null) try{ps.close();} catch(Exception e){}
-            if (conn != null) try{conn.close();} catch(Exception e){}
+            this.closeAll(ps, rs);
             return user;
         }
     }
@@ -62,37 +55,27 @@ public class UserDaoImpl implements UserDao{
      */
     @Override
     public List<User> selectUsers() {
-        Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         List<User> users = new ArrayList<>();
 
-        try {
-            conn = this.dataSource.getConnection();
-
-            ps = conn.prepareStatement("SELECT * FROM user");
+        try (Connection conn = this.dataSource.getConnection();){
+            ps = conn.prepareStatement("SELECT id, name, password FROM user");
 
             rs = ps.executeQuery();
             rs.next();
 
             while(rs.next()) {
-                User user = new User();
-                user.setId(rs.getString("id"));
-                user.setName(rs.getString("name"));
-                user.setPassword(rs.getString("password"));
-                users.add(user);
+                users.add(new User(rs.getString(1), rs.getString(2), rs.getString(3)));
             }
-
 
             return users;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         } finally {
-            if (rs != null) try{rs.close();} catch(Exception e){}
-            if (ps != null) try{ps.close();} catch(Exception e){}
-            if (conn != null) try{conn.close();} catch(Exception e){}
+            this.closeAll(ps, rs);
             return users;
         }
     }
@@ -103,7 +86,6 @@ public class UserDaoImpl implements UserDao{
      */
     @Override
     public void updateUser(User user) {
-        Connection conn = null;
         PreparedStatement ps = null;
 
         StringBuffer query = new StringBuffer();
@@ -114,8 +96,7 @@ public class UserDaoImpl implements UserDao{
             query.append("password = ? ");
         query.append("WHERE id = ? ");
 
-        try {
-            conn = this.dataSource.getConnection();
+        try (Connection conn = this.dataSource.getConnection();){
 
             ps = conn.prepareStatement(query.toString());
 
@@ -131,9 +112,21 @@ public class UserDaoImpl implements UserDao{
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if ( ps != null ) try{ps.close();} catch(Exception e){}
-            if ( conn != null ) try{conn.close();} catch(Exception e){}
+            this.closeAll(ps);
         }
+    }
+
+    /**
+     * Statement, ResultSet close 중복 로직 리팩토링 (메소드 추출)
+     * @param ps
+     */
+    private void closeAll(PreparedStatement ps) {
+        this.closeAll(ps, null);
+    }
+
+    private void closeAll(PreparedStatement ps, ResultSet rs) {
+        if (rs != null) try{rs.close();} catch(Exception e){}
+        if (ps != null) try{ps.close();} catch(Exception e){}
     }
 
 }
