@@ -80,6 +80,28 @@ public class UserDaoImpl implements UserDao{
     }
 
     /**
+     *  유저 등록
+     * @param user
+     */
+    @Override
+    public void createUser(User user) {
+        PreparedStatement ps = null;
+
+        StringBuffer query = new StringBuffer("INSERT INTO user(id, name, password) VALUES(?,?,?)");
+        try(Connection conn = this.dataSource.getConnection();) {
+            ps = conn.prepareStatement(query.toString());
+            ps.setString(1,user.getId());
+            ps.setString(2,user.getName());
+            ps.setString(3,user.getPassword());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            this.closeAll(ps);
+        }
+    }
+
+    /**
      * 유저 정보 수정
      * @param user
      */
@@ -113,6 +135,11 @@ public class UserDaoImpl implements UserDao{
         } finally {
             this.closeAll(ps);
         }
+    }
+
+    @Override
+    public void deleteUser(String id) {
+
     }
 
     /**

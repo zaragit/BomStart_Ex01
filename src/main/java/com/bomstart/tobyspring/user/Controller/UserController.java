@@ -26,9 +26,19 @@ public class UserController {
         return this.userService.getUser(id);
     }
 
+    @PostMapping("/create")
+    public @ResponseBody void createUser(User user) {
+        this.userService.createUSer(user);
+    }
+
     @PutMapping("/update")
     public @ResponseBody User updateUser(User user) {
         return this.userService.updateUser(user);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public @ResponseBody void deleteUser(@PathVariable String id){
+        this.userService.deleteUser(id);
     }
 
 }
