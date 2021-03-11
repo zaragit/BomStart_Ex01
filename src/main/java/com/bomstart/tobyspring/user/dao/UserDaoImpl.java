@@ -73,7 +73,6 @@ public class UserDaoImpl implements UserDao{
             return users;
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         } finally {
             this.closeAll(ps, rs);
             return users;
