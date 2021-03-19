@@ -1,6 +1,7 @@
 package com.bomstart.tobyspring.user.dao;
 
 import com.bomstart.tobyspring.user.domain.User;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -94,8 +95,8 @@ public class UserDaoImpl implements UserDao{
             ps.setString(2,user.getName());
             ps.setString(3,user.getPassword());
             ps.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
+        } catch (SQLException e2){
+            e2.printStackTrace();
         } finally {
             this.closeAll(ps);
         }
