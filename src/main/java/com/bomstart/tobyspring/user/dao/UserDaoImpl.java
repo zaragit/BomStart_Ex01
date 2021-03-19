@@ -139,7 +139,20 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public void deleteUser(String id) {
+        PreparedStatement ps = null;
 
+        User user = selectUser(id);
+
+        StringBuffer query = new StringBuffer("DELETE FROM user WHERE id = ?");
+        try(Connection conn = this.dataSource.getConnection();) {
+            ps = conn.prepareStatement(query.toString());
+            ps.setString(1,user.getId());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            this.closeAll(ps);
+        }
     }
 
     /**
