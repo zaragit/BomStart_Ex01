@@ -25,7 +25,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void createUSer(User user) {
+    public void createUser(User user) {
+        if(userDao.selectUser(user.getId())!=null){
+            System.out.println("이미 존재하는 id 입니다.");
+        }
         this.userDao.createUser(user);
     }
 

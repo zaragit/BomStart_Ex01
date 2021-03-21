@@ -2,7 +2,6 @@ package com.bomstart.tobyspring.user.Controller;
 
 import com.bomstart.tobyspring.user.domain.User;
 import com.bomstart.tobyspring.user.service.UserService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class UserController {
 
     @PostMapping("/create")
     public @ResponseBody void createUser(User user) {
-        this.userService.createUSer(user);
+        this.userService.createUser(user);
     }
 
     @PutMapping("/update")
