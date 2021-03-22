@@ -115,7 +115,7 @@ public class UserDaoImpl implements UserDao{
         if (user.getName() != null)
             query.append("name = ? ");
         if (user.getPassword() != null)
-            query.append("password = ? ");
+            query.append(", password = ? ");
         query.append("WHERE id = ? ");
 
         try (Connection conn = this.dataSource.getConnection();){
