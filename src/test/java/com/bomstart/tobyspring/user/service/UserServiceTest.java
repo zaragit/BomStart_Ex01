@@ -5,8 +5,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +44,11 @@ class UserServiceTest {
         User actual = userService.updateUser(user1);
 
         // then
-        assertThat(actual).usingRecursiveComparison().isEqualTo(user1);
+        assertAll(
+                () -> assertEquals(actual.getId(), user1.getId()),
+                () -> assertEquals(actual.getName(), user1.getName()),
+                () -> assertEquals(actual.getPassword(), user1.getPassword())
+        );
     }
 
     @Test
@@ -76,9 +78,11 @@ class UserServiceTest {
 
         // then
         assertNotNull(actual);
-        assertEquals(user1.getId(), actual.getId());
-        assertEquals(user1.getName(), actual.getName());
-        assertEquals(user1.getPassword(), actual.getPassword());
+        assertAll(
+                () -> assertEquals(actual.getId(), user1.getId()),
+                () -> assertEquals(actual.getName(), user1.getName()),
+                () -> assertEquals(actual.getPassword(), user1.getPassword())
+        );
     }
 
     @Test
@@ -96,19 +100,21 @@ class UserServiceTest {
     @Test
     @DisplayName("유저 목록 조회 테스트")
     void selectUsers() {
-        Collection<User> actual = userService.getUsers();
-        int start = actual.size();
+        int count = userService.getUsers().size();
 
-        userService.createUser(user1); // given
-        actual = userService.getUsers(); // when
-        assertEquals(actual.size(), start + 1); // then
-
-        userService.createUser(user2); // given
-        actual = userService.getUsers(); // when
-        assertEquals(actual.size(), start + 2); // then
-
-        userService.createUser(user3); // given
-        actual = userService.getUsers(); // when
-        assertEquals(actual.size(), start + 3); // then
+        assertAll(
+                () -> {
+                    userService.createUser(user1);
+                    assertEquals(userService.getUsers().size(), count + 1);
+                },
+                () -> {
+                    userService.createUser(user2);
+                    assertEquals(userService.getUsers().size(), count + 2);
+                },
+                () -> {
+                    userService.createUser(user3);
+                    assertEquals(userService.getUsers().size(), count + 3);
+                }
+        );
     }
 }
