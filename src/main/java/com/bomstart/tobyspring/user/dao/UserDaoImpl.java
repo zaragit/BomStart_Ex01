@@ -65,7 +65,6 @@ public class UserDaoImpl implements UserDao{
             ps = conn.prepareStatement("SELECT id, name, password FROM user");
 
             rs = ps.executeQuery();
-            rs.next();
 
             while(rs.next()) {
                 users.add(new User(rs.getString(1), rs.getString(2), rs.getString(3)));
@@ -115,11 +114,10 @@ public class UserDaoImpl implements UserDao{
         if (user.getName() != null)
             query.append("name = ? ");
         if (user.getPassword() != null)
-            query.append("password = ? ");
+            query.append(", password = ? ");
         query.append("WHERE id = ? ");
 
         try (Connection conn = this.dataSource.getConnection();){
-
             ps = conn.prepareStatement(query.toString());
 
             int idx = 1;
