@@ -27,14 +27,7 @@ public class UserController {
 
     @PostMapping("/create")
     public @ResponseBody void createUser(User user) {
-        if(userService.getUser(user.getId())==null){
-            userService.createUser(user);
-            System.out.println("회원을 추가하였습니다.");
-        } else {
-            System.out.println("해당 id를 가진 회원이 있어서 회원정보를 수정합니다.");
-            userService.updateUser(user);
-            System.out.println("회원을 추가하였습니다.");
-        }
+        userService.createUser(user);
     }
 
     @PutMapping("/update")
@@ -44,12 +37,7 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public @ResponseBody void deleteUser(@PathVariable String id){
-        if(userService.getUser(id)!=null){
-            userService.deleteUser(id);
-            System.out.println("회원 정보를 삭제했습니다.");
-        } else {
-            System.out.println("해당 id를 가진 회원이 존재하지 않습니다.");
-        }
+        userService.deleteUser(id);
     }
 
 }
