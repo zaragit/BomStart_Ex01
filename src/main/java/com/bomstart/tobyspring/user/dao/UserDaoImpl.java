@@ -1,7 +1,6 @@
 package com.bomstart.tobyspring.user.dao;
 
 import com.bomstart.tobyspring.user.domain.User;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
