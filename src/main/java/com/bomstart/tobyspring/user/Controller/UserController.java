@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping("/create")
     public @ResponseBody void createUser(User user) {
-        this.userService.createUser(user);
+        userService.createUser(user);
     }
 
     @PutMapping("/update")
@@ -37,7 +37,7 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public @ResponseBody void deleteUser(@PathVariable String id){
-        this.userService.deleteUser(id);
+        userService.deleteUser(id);
     }
 
 }

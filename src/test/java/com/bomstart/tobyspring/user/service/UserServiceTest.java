@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserServiceTest {
+
     @Autowired
     UserService userService;
 
@@ -21,14 +22,14 @@ class UserServiceTest {
     private User user3;
 
     @BeforeEach
-    void createTestFixture() {
+    void createTestFixture(){
         user1 = new User("TestUser1", "TestName1", "1234");
         user2 = new User("TestUser2", "TestName2", "1234");
         user3 = new User("TestUser3", "TestName3", "1234");
     }
 
     @AfterEach
-    void clearTestFixture() {
+    void clearTestFixture(){
         userService.deleteUser(user1.getId());
         userService.deleteUser(user2.getId());
         userService.deleteUser(user3.getId());
