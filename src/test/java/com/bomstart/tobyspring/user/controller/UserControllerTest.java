@@ -13,10 +13,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -48,6 +48,25 @@ public class UserControllerTest {
         userService.deleteUser(user1.getId());
         userService.deleteUser(user2.getId());
         userService.deleteUser(user3.getId());
+    }
+
+    MultiValueMap<String, String> convertMapFromVO(User param){
+        MultiValueMap<String, String> user = new LinkedMultiValueMap<>();
+        user.put("id", Collections.singletonList(param.getId()));
+        user.put("name", Collections.singletonList(param.getName()));
+        user.put("password", Collections.singletonList(param.getPassword()));
+        return user;
+    }
+
+    @Test
+    @DisplayName("유저 등록 Rest API 테스트")
+    void createUser() throws Exception {
+        MultiValueMap<String, String> user1 = convertMapFromVO(this.user1);
+
+        mockMvc.perform(
+                post("/user/create/").params(user1))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -94,5 +113,19 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name", is(newStr)))
                 .andExpect(jsonPath("password", is(newStr)));
+    }
+
+    @Test
+    @DisplayName("회원 삭제 Rest API 테스트")
+    void deleteUser() throws Exception {
+        // given
+        userService.createUser(user1);
+
+        // then
+        mockMvc.perform(
+                delete("/user/delete/"+user1.getId()))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 }
