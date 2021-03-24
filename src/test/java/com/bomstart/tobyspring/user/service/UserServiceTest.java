@@ -75,10 +75,8 @@ class UserServiceTest {
         userService.createUser(user1);
 
         // when
-        user1.setId(null);
-        user1.setName("testName2");
-        user1.setPassword("testPw2");
-        User actual = userService.updateUser(user1);
+        User wrongUser = new User(null, "!@#$%^&*(", "!@#$%^&*(");
+        User actual = userService.updateUser(wrongUser);
 
         // then
         assertNull(actual);
