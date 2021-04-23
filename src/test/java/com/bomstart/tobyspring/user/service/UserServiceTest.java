@@ -1,12 +1,11 @@
 package com.bomstart.tobyspring.user.service;
 
 import com.bomstart.tobyspring.user.domain.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +49,19 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("중복 회원 생성")
+    void createDuplicateUser() {
+        Assertions.assertThrows(DuplicateKeyException.class, () -> {
+            // given
+            User expected = user1;
+
+            // when
+            userService.createUser(expected);
+            userService.createUser(expected);
+        });
+    }
+
+    @Test
     @DisplayName("유저 수정 테스트")
     void updateUser() {
         // given
@@ -71,15 +83,14 @@ class UserServiceTest {
     @Test
     @DisplayName("존재하지 않는 유저 수정 테스트")
     void updateUserNotExist() {
-        // given
-        userService.createUser(user1);
+        Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
+            // given
+            userService.createUser(user1);
 
-        // when
-        User wrongUser = new User(null, "!@#$%^&*(", "!@#$%^&*(");
-        User actual = userService.updateUser(wrongUser);
-
-        // then
-        assertNull(actual);
+            // when
+            User wrongUser = new User(null, "!@#$%^&*(", "!@#$%^&*(");
+            userService.updateUser(wrongUser);
+        });
     }
 
     @Test
@@ -103,13 +114,9 @@ class UserServiceTest {
     @Test
     @DisplayName("존재하지 않는 유저를 조회")
     void selectUserNotExist() {
-        // given when
-        User actual = userService.getUser(null);
-        User actual2 = userService.getUser("!@#$%^&*(");
-
-        // then
-        assertNull(actual);
-        assertNull(actual2);
+        Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
+            userService.getUser(null);
+        });
     }
 
     @Test
@@ -138,12 +145,13 @@ class UserServiceTest {
     void deleteUser(){
         // given
         userService.createUser(user1);
+        assertEquals(1, userService.getUsers().size());
 
         // when
         userService.deleteUser(user1.getId());
 
         // then
-        User actual = userService.getUser(user1.getId());
-        assertThat(actual).isNull();
+        assertEquals(0, userService.getUsers().size());
     }
+
 }

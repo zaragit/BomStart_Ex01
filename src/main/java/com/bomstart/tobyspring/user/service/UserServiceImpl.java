@@ -26,25 +26,28 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void createUser(User user) {
-        if(userDao.selectUser(user.getId())==null){
-            userDao.createUser(user);
-        } else {
-            System.out.println("이미 존재하는 id 입니다.");
-        }
+        this.userDao.createUser(user);
     }
 
     @Override
     public User updateUser(User user) {
-        this.userDao.updateUser(user);
+        User savedUser = this.userDao.selectUser(user.getId());
+
+        if (!user.getName().equals("")) {
+            savedUser.setName(user.getName());
+        }
+
+        if (!user.getPassword().equals("")) {
+            savedUser.setPassword(user.getPassword());
+        }
+
+        this.userDao.updateUser(savedUser);
+
         return this.userDao.selectUser(user.getId());
     }
 
     @Override
     public void deleteUser(String id) {
-        if(getUser(id)!=null){
-            userDao.deleteUser(id);
-        } else {
-            System.out.println("존재하지 않는 회원입니다.");
-        }
+        this.userDao.deleteUser(id);
     }
 }
